@@ -19,28 +19,6 @@ namespace Ticketing.Client.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Ticketing.Client.Model.Note", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Comments")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(1000)")
-                        .HasMaxLength(1000);
-
-                    b.Property<int>("TicketID")
-                        .HasColumnType("int");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("TicketID");
-
-                    b.ToTable("Notes");
-                });
-
             modelBuilder.Entity("Ticketing.Client.Model.Ticket", b =>
                 {
                     b.Property<int>("ID")
@@ -77,16 +55,6 @@ namespace Ticketing.Client.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Tickets");
-                });
-
-            modelBuilder.Entity("Ticketing.Client.Model.Note", b =>
-                {
-                    b.HasOne("Ticketing.Client.Model.Ticket", "Ticket")
-                        .WithMany("Notes")
-                        .HasForeignKey("TicketID")
-                        .HasConstraintName("FK_Ticket_Notes")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
