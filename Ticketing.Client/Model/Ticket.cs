@@ -7,6 +7,10 @@ namespace Ticketing.Client.Model
 {
     public class Ticket
     {
+        public Ticket()
+        {
+            Notes = new List<Note>();
+        }
         //Data Notation:
 
         //[key]
