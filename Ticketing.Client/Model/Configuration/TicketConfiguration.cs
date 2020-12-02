@@ -49,8 +49,11 @@ namespace Ticketing.Client.Model.Configuration
                 .HasForeignKey(n => n.TicketID)
                 .HasConstraintName("FK_Ticket_Notes")
                 .OnDelete(DeleteBehavior.Cascade);  //La relazione viene definita in un solo posto, non serve ridefinirla in Note
-            
 
+            //Gestione concorrenza
+            builder
+                .Property(t => t.RowVersion)
+                .IsRowVersion();
 
 
 

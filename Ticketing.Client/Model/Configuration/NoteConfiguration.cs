@@ -19,7 +19,10 @@ namespace Ticketing.Client.Model.Configuration
                 .IsRequired();
 
             //La relazione tra Ticket e Note posso metterla anche qui
-          
+
+            builder
+                .Property(n => n.RowVersion)
+                .IsRowVersion();
         }
     }
 }

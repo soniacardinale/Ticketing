@@ -7,10 +7,10 @@ namespace Ticketing.Client.Model
 {
     public class Ticket
     {
-        public Ticket()
-        {
-            Notes = new List<Note>();
-        }
+        //public Ticket()
+        //{
+        //    Notes = new List<Note>();
+        //}
         //Data Notation:
 
         //[key]
@@ -26,7 +26,10 @@ namespace Ticketing.Client.Model
         public string State { get; set; }
         public  string Requestor { get; set; }
 
+        //Gestione della concorrenza
+        public Byte[] RowVersion { get; set; }
         public virtual List<Note> Notes { get; set; } //Navigation Property monodirezionale perchè ho solo quella che dal ticket mi fa andare alle note.
                                                       //Aggiungo quella da Note a Ticket
+
     }
 }

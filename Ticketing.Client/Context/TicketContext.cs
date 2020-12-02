@@ -12,8 +12,8 @@ namespace Ticketing.Client.Context
 {
     sealed class TicketContext : DbContext
     {
-        DbSet<Ticket> Tickets { get; set; }
-        DbSet<Note> Notes { get; set; }
+        public DbSet<Ticket> Tickets { get; set; }
+        public DbSet<Note> Notes { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionBuilder)
         {
             //anzichè fare tutto questo ogni volta, mi creo una classe di supporto che utilizzerò ogni volta -> Lo metto in Ticketing.Helpers
@@ -33,8 +33,12 @@ namespace Ticketing.Client.Context
             //Oppure:
             //string connString = Config.GetSection("ConnString")["TicketDb"];
 
-            optionBuilder.UseSqlServer(connString); 
+            //Caricamento dati
+            optionBuilder
+               .UseLazyLoadingProxies()
+               .UseSqlServer(connString);
         }
+        
 
        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
