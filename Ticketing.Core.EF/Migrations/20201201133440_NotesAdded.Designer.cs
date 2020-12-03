@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Ticketing.Client.Context;
+using Ticketing.Core.EF.Context;
 
 namespace Ticketing.Client.Migrations
 {
     [DbContext(typeof(TicketContext))]
-    [Migration("20201201111405_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20201201133440_NotesAdded")]
+    partial class NotesAdded
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,6 +20,28 @@ namespace Ticketing.Client.Migrations
                 .HasAnnotation("ProductVersion", "3.1.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("Ticketing.Client.Model.Note", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Comments")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
+                    b.Property<int>("TicketID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("TicketID");
+
+                    b.ToTable("Notes");
+                });
 
             modelBuilder.Entity("Ticketing.Client.Model.Ticket", b =>
                 {
@@ -42,6 +64,11 @@ namespace Ticketing.Client.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Requestor")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
                     b.Property<string>("State")
                         .HasColumnType("nvarchar(max)");
 
@@ -52,6 +79,16 @@ namespace Ticketing.Client.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Tickets");
+                });
+
+            modelBuilder.Entity("Ticketing.Client.Model.Note", b =>
+                {
+                    b.HasOne("Ticketing.Client.Model.Ticket", "Ticket")
+                        .WithMany("Notes")
+                        .HasForeignKey("TicketID")
+                        .HasConstraintName("FK_Ticket_Notes")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
