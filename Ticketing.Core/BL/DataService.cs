@@ -1,49 +1,60 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Ticketing.Core.EF.Repository;
 using Ticketing.Core.Model;
 using Ticketing.Core.Repository;
 
-namespace Ticketing.Client
+namespace Ticketing.Core.BL
 {
     public class DataService
     {
+        private readonly ITicketRepository ticketRepo;
+        private readonly INoteRepository noteRepo;
 
+        public DataService(
+            ITicketRepository ticketRepo,
+            INoteRepository noteRepo
+        )
+        {
+            this.ticketRepo = ticketRepo;
+            this.noteRepo = noteRepo;
+        }
 
         #region Temp ... waiting for DI
 
-        private ITicketRepository GetTicketRepository()
-        {
-            return new Ticketing.Core.ADONET.Repository.ADONETTicketRepository();
-            //return new Ticketing.Core.EF.Repository.EFTicketRepository();
-            //return new Ticketing.Core.Mock.Repository.MockTicketRepository();
-        }
+        //private ITicketRepository GetTicketRepository()
+        //{
+        //    return null;
+        //    //return new Ticketing.Core.ADONET.Repository.ADONETTicketRepository();
+        //    //return new Ticketing.Core.EF.Repository.EFTicketRepository();
+        //    //return new Ticketing.Core.Mock.Repository.MockTicketRepository();
+        //}
 
-        private INoteRepository GetNoteRepository()
-        {
-            return new Ticketing.Core.EF.Repository.EFNoteRepository();
-            //return new Ticketing.Core.Mock.Repository.MockNoteRepository();
-        }
+        //private INoteRepository GetNoteRepository()
+        //{
+        //    return null;
+        //    //return new Ticketing.Core.EF.Repository.EFNoteRepository();
+        //    //return new Ticketing.Core.Mock.Repository.MockNoteRepository();
+        //}
 
         #endregion
 
         public List<Ticket> List()
         {
-            ITicketRepository repo = GetTicketRepository();
+            //ITicketRepository repo = GetTicketRepository();
 
-            return repo.Get().ToList();
+            return ticketRepo.Get().ToList();
         }
 
         public bool AddTicket(Ticket ticket)
         {
             try
             {
-                ITicketRepository repo = GetTicketRepository();
+                //ITicketRepository repo = GetTicketRepository();
 
                 if (ticket != null)
                 {
-                    var result = repo.Add(ticket);
+                    var result = ticketRepo.Add(ticket);
                     return result;
                 }
                 else
@@ -63,11 +74,11 @@ namespace Ticketing.Client
         {
             try
             {
-                INoteRepository repo = GetNoteRepository();
+                //INoteRepository repo = GetNoteRepository();
 
                 if (newNote != null)
                 {
-                    repo.Add(newNote);
+                    noteRepo.Add(newNote);
                 }
                 else
                     Console.WriteLine("Note non può essere nullo.");
@@ -81,12 +92,12 @@ namespace Ticketing.Client
             }
         }
 
-        public Ticket GetTicketByID(int id)
+        public Ticket GetTicketById(int id)
         {
-            ITicketRepository repo = GetTicketRepository();
+            //ITicketRepository repo = GetTicketRepository();
 
             if (id > 0)
-                return repo.GetByID(id);
+                return ticketRepo.GetByID(id);
 
             return null;
         }
@@ -95,7 +106,7 @@ namespace Ticketing.Client
         {
             try
             {
-                ITicketRepository repo = GetTicketRepository();
+                //ITicketRepository repo = GetTicketRepository();
 
                 if (ticket == null)
                     return false;
@@ -103,7 +114,7 @@ namespace Ticketing.Client
                 Console.WriteLine("Smandrappa il Ticket e poi premi enter ...");
                 Console.ReadKey();
 
-                repo.Update(ticket);
+                ticketRepo.Update(ticket);
 
             }
             catch (Exception ex)
@@ -113,6 +124,11 @@ namespace Ticketing.Client
                 return false;
             }
 
+            return true;
+        }
+
+        public bool Delete(int id)
+        {
             return true;
         }
     }

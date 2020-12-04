@@ -26,6 +26,7 @@ namespace Ticketing.Core.EF.Context
 
             //optionBuilder.UseLazyLoadingProxies();
             optionBuilder.UseSqlServer(connString);
+            
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

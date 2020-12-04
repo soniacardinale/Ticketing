@@ -1,6 +1,7 @@
 ﻿using System;
-using Ticketing.Client.Model;
 using Ticketing.Core.Model;
+using Microsoft.Extensions.DependencyInjection;
+using Ticketing.Core.BL;
 
 namespace Ticketing.Client
 {
@@ -22,76 +23,87 @@ namespace Ticketing.Client
 
                 switch (command)
                 {
+                    case "h":
+                        Console.WriteLine("Help");
+                        Console.WriteLine("q: quit | a: add ticket");
+                        Console.WriteLine("n: add note | l: list ticket");
+                        Console.WriteLine("e: edit ticket");
+                        break;
                     case "q":
                         quit = true;
                         break;
-
                     case "a":
                         // ADD
+                        // codice per recuperare i dati di un ticket ...
                         Ticket ticket = new Ticket();
                         ticket.Titolo = GetData("Titolo");
                         ticket.Description = GetData("Descrizione");
                         ticket.Category = GetData("Categoria");
                         ticket.Priority = GetData("Priorità");
-                        ticket.Requestor = GetData("Richiedente");
+                        ticket.Requestor = "Roberto Ajolfi";
                         ticket.State = "New";
                         ticket.IssueDate = DateTime.Now;
-                        // codice per recuperare i dati di un ticket ...
-                        var result_a = dataService.AddTicket(ticket);
-                        Console.WriteLine("Operation " + (result_a ? "Completed" : "Failed!"));
-                        break;
 
+                        var result = dataService.AddTicket(ticket);
+                        Console.WriteLine("Operation " + (result ? "Completed" : "Failed!"));
+                        break;
                     case "n":
-                        //ADD NOTE
-                        var ticketId = GetData("TicketID");
-                        int.TryParse(ticketId, out int tID);
+                        // ADD NOTE
+                        var ticketId = GetData("Ticket ID");
+                        int.TryParse(ticketId, out int tId);
                         var comments = GetData("Commento");
-                        Note note = new Note { TicketID = tID, Comments = comments };
-                        var result_n = dataService.AddNote(note);
-                        Console.WriteLine("Operation " + (result_n ? "Completed" : "Failed!"));
+                        Note newNote = new Note
+                        {
+                            TicketID = tId,
+                            Comments = comments
+                        };
+
+                        var noteResult = dataService.AddNote(newNote);
+                        Console.WriteLine("Operation " + (noteResult ? "Completed" : "Failed!"));
                         break;
-
-
                     case "l":
                         // LIST
                         Console.WriteLine("-- TICKET LIST (EAGER) --");
                         foreach (var t in dataService.List())
                         {
                             Console.WriteLine($"[{t.ID}] {t.Titolo}");
-                            foreach (var n in t.Notes)
-                                Console.WriteLine($"\t{n.Comments}");
+                            if (t.Notes != null)
+                                foreach (var n in t.Notes)
+                                    Console.WriteLine($"\t{n.Comments}");
                         }
                         Console.WriteLine("-----------------");
                         break;
-
                     case "e":
                         // EDIT
-                        var ticketId3 = GetData("TicketID");
-                        int.TryParse(ticketId3, out int tID3);
-                        var ticket3 = dataService.GetTicketByID(tID3);
-                        ticket3.Titolo = GetData("Titolo");
-                        ticket3.Description = GetData("Descrizione");
-                        ticket3.Category = GetData("Categoria");
-                        ticket3.Priority = GetData("Priorità");
-                        ticket3.State = GetData("Stato");
+                        var ticketId3 = GetData("Ticket ID");
+                        int.TryParse(ticketId3, out int tId3);
+                        var ticket3 = dataService.GetTicketByID(tId3);
+
+                        ticket3.Titolo = GetData("Title", ticket3.Titolo);
+                        ticket3.Description = GetData("Descrizione", ticket3.Description);
+                        ticket3.Category = GetData("Categoria", ticket3.Category);
+                        ticket3.Priority = GetData("Priorità", ticket3.Priority);
+                        ticket3.State = GetData("Stato", ticket3.State);
+
                         var editResult = dataService.Edit(ticket3);
                         Console.WriteLine("Operation " + (editResult ? "Completed" : "Failed!"));
                         break;
-
                     case "d":
                         // DELETE
                         break;
-
                     default:
                         Console.WriteLine("Comando sconosciuto.");
                         break;
                 }
 
                 #endregion
+
             } while (!quit);
 
             Console.WriteLine("=== Bye Bye ===");
+
         }
+
         private static string GetData(string message)
         {
             Console.Write(message + ": ");
@@ -99,13 +111,11 @@ namespace Ticketing.Client
             return value;
         }
 
-        //Overloading
-        private static string GetData(string message, string initialvalue)
+        private static string GetData(string message, string initialValue)
         {
-            Console.Write(message + " ({0}): ", initialvalue);
+            Console.Write(message + $" ({initialValue}): ");
             var value = Console.ReadLine();
-            return string.IsNullOrEmpty(value) ? initialvalue : value;
+            return string.IsNullOrEmpty(value) ? initialValue : value;
         }
-
     }
 }
